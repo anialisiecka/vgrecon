@@ -1,6 +1,6 @@
 ## Installation
 
-To run 'vgrecon', you need a C++ compiler supporting C++11 or later (e.g., `g++`) and the `gfalace` tool installed in your system PATH.
+To run `vgrecon`, you need a C++ compiler supporting C++11 or later (e.g., `g++`) and the `gfalace` tool installed in your system PATH.
 
 1. **Clone the repository:**
    ```bash
