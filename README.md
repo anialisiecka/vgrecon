@@ -1,3 +1,7 @@
+## About the Project
+
+This repository provides an algorithm for generating a **reconciled graph** and computing the **homology relation cardinality** (size) for GFA graphs. 
+
 ## Installation
 
 To run `vgrecon`, you need a C++ compiler supporting C++11 or later (e.g., `g++`) and the `gfalace` tool installed in your system PATH.
