@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+show_help() {
+    echo "Usage: ./vgrecon --gfa1 <file.gfa> --gfa2 <file.gfa> --fasta <file.fa> --output <file.gfa>"
+    echo ""
+    echo "Options:"
+    echo "  --gfa1    Path to the first input variation graph (GFA format)"
+    echo "  --gfa2    Path to the second input variation graph (GFA format)"
+    echo "  --fasta   Path to the FASTA file containing full input sequences"
+    echo "  --output  Path where the final reconciled graph will be saved"
+    echo "  -h, --help Show this help message"
+}
+
+if [[ $# -eq 0 ]]; then
+    show_help
+    exit 0
+fi
+
+GFA1=""
+GFA2=""
+FASTA=""
+OUTPUT=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --gfa1) GFA1="$2"; shift 2 ;;
+        --gfa2) GFA2="$2"; shift 2 ;;
+        --fasta) FASTA="$2"; shift 2 ;;
+        --output) OUTPUT="$2"; shift 2 ;;
+        -h|--help) show_help; exit 0 ;;
+        *) echo "Error: Unknown argument $1"; show_help; exit 1 ;;
+    esac
+done
+
+if [[ -z "$GFA1" || -z "$GFA2" || -z "$FASTA" || -z "$OUTPUT" ]]; then
+    echo "Error: Missing required arguments." >&2
+    show_help >&2
+    exit 1
+fi
+
+if [[ ! -x "./intersect" ]]; then
+    echo "Error: Compiled binary './rec' not found." >&2
+    echo "Please compile your C++ code first using: g++ -O3 rec.cpp -o rec" >&2
+    exit 1
+fi
+
+TMP_MAP=$(mktemp)
+
+trap 'rm -f "$TMP_MAP"' EXIT
+
+./rec "$GFA1" "$GFA2" "$FASTA" "$TMP_MAP"
+gfalace -g "$TMP_MAP" -o "$OUTPUT" --fill-gaps 2 --fasta-files "$FASTA"
