@@ -4,7 +4,7 @@ This repository provides an algorithm for generating a **reconciled graph** and 
 
 ## Installation
 
-To run `vgrecon`, you need a C++ compiler supporting C++11 or later (e.g., `g++`) and the `gfalace` tool installed in your system PATH.
+To run `vgrecon`, you need a C++ compiler supporting C++11 or later (e.g., `g++`) and the [gfalace](https://github.com/pangenome/gfalace) tool installed in your system PATH.
 
 1. **Clone the repository:**
    ```bash
@@ -12,27 +12,27 @@ To run `vgrecon`, you need a C++ compiler supporting C++11 or later (e.g., `g++`
    cd vgrecon
    ```
 
-2. **Compile the core algorithm:**
+2. **Compile the core algorithm and homology calculation algorithm:**
    ```bash
-   g++ -O3 vgrecon.cpp -o vgrecon
-   ```
-
-3. **Compile the algorithm for homology relation cardinality calculation**
-   ```bash
+   g++ -O3 rec.cpp -o rec
    g++ -O3 homRel.cpp -o homrel
    ```
+
+3. **Make the main pipeline script executable:**
+   ```bash
+   chmod +x vgrecon
+   ```
+
 ## Usage
-### Step 1: Run the core reconciliation algorithm by passing two GFA files, a FASTA file, and the output path:
+
+Ensure that the compiled `rec` binary remains in the same directory as the `vgrecon` script, then run:
+
 ```bash
-./vgrecon input1.gfa input2.gfa input.fasta output_rec.gfa
+./vgrecon --gfa1 graph1.gfa --gfa2 graph2.gfa --fasta sequences.fa --output reconciled.gfa
 ```
 
-### Step 2: Use `gfalace` to insert trivial nodes into the `output_rec.gfa` graph obtained in Step 1, using the FASTA sequences to fill the gaps:
-```bash
-gfalace -g output_rec.gfa -o output.gfa --fill-gaps 2 --fasta-files input.fasta
-```
+Additionally, if you want to measure the cardinality (size) of the homology relation induced by any variation graph (e.g., a reconciled graph), you can run the following:
 
-### Step 3 (optional): Compute the cardinality of the homology relation induced by the reconciled graph `output.gfa` obtained in Step 2:
 ```bash
-./homrel output.gfa
+./homrel graph.gfa
 ```
